@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employment Application - ใบสมัครงาน</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header h2 {
+            margin: 5px 0;
+            font-size: 18px;
+            color: #666;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .form-group.small {
+            min-width: 100px;
+            flex: 0.5;
+        }
+        .form-group.full {
+            min-width: 100%;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .radio-group label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin: 0;
+        }
+        .radio-group input {
+            width: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 13px;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        td input, td select {
+            border: none;
+            padding: 5px;
+        }
+        .skill-table td {
+            text-align: center;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .upload-section {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .upload-section input[type="file"] {
+            margin: 10px 0;
+        }
+        .photo-upload {
+            width: 120px;
+            height: 150px;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        .photo-upload img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .checkbox-group label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .yes-no-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .yes-no-question:last-child {
+            border-bottom: none;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .loading.show {
+            display: block;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="header" style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+            <img src="/Logo.png" alt="Logo" style="width: 80px; height: auto;">
+            <div>
+                <h1>EMPLOYMENT APPLICATION</h1>
+                <h2>ใบสมัครงาน</h2>
+                <p style="font-size: 12px; color: #666;">(Please fill in English, if capable)</p>
+            </div>
+        </div>
+
+        <!-- Resume Upload Section -->
+        <div class="upload-section">
+            <h3>📄 Upload Resume เพื่อกรอกฟอร์มอัตโนมัติ</h3>
+            <input type="file" id="resumeFile" accept=".pdf,.doc,.docx">
+            <br>
+            <button class="btn btn-primary" onclick="parseResume()">🤖 Parse Resume with AI</button>
+            <div class="loading" id="loadingIndicator">
+                <p>⏳ กำลังอ่าน Resume และกรอกข้อมูล...</p>
+            </div>
+        </div>
+
+        <form id="applicationForm">
+            <!-- Position & Salary -->
+            <div class="section">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Position Applied ตำแหน่งที่สมัคร *</label>
+                        <input type="text" name="positionApplied" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Salary เงินเดือนที่คาดหวัง</label>
+                        <input type="text" name="expectedSalary">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Record -->
+            <div class="section">
+                <div class="section-title">PERSONAL RECORD ประวัติส่วนตัว</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ชื่อ (นาย/นางสาว/นาง) *</label>
+                        <input type="text" name="firstNameTh" required>
+                    </div>
+                    <div class="form-group small">
+                        <label>ชื่อเล่น</label>
+                        <input type="text" name="nickname">
+                    </div>
+                    <div class="form-group">
+                        <label>นามสกุล *</label>
+                        <input type="text" name="lastNameTh" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Name (Mr./Miss/Mrs.) *</label>
+                        <input type="text" name="firstNameEn" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name *</label>
+                        <input type="text" name="lastNameEn" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full">
+                        <label>Present Address ที่อยู่ปัจจุบัน *</label>
+                        <input type="text" name="address" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group small">
+                        <label>Moo หมู่</label>
+                        <input type="text" name="moo">
+                    </div>
+                    <div class="form-group">
+                        <label>District ตำบล</label>
+                        <input type="text" name="subDistrict">
+                    </div>
+                    <div class="form-group">
+                        <label>District เขต/อำเภอ</label>
+                        <input type="text" name="district">
+                    </div>
+                    <div class="form-group">
+                        <label>Province จังหวัด *</label>
+                        <input type="text" name="province" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group small">
+                        <label>Zip Code รหัสไปรษณีย์</label>
+                        <input type="text" name="zipCode">
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Phone โทรศัพท์มือถือ *</label>
+                        <input type="tel" name="mobile" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email อีเมล์</label>
+                        <input type="email" name="email">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date of Birth วัน/เดือน/ปี เกิด *</label>
+                        <input type="date" name="birthDate" required>
+                    </div>
+                    <div class="form-group small">
+                        <label>Age อายุ</label>
+                        <input type="number" name="age">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Identification Card No. หมายเลขบัตรประจำตัวประชาชน *</label>
+                        <input type="text" name="idCard" required maxlength="13">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group small">
+                        <label>Sex เพศ *</label>
+                        <select name="sex" required>
+                            <option value="">-- เลือก --</option>
+                            <option value="male">ชาย Male</option>
+                            <option value="female">หญิง Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group small">
+                        <label>Blood Type กรุ๊ปเลือด</label>
+                        <select name="bloodType">
+                            <option value="">-- เลือก --</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="AB">AB</option>
+                            <option value="O">O</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Religion ศาสนา</label>
+                        <input type="text" name="religion">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group small">
+                        <label>Height ส่วนสูง (cm.)</label>
+                        <input type="number" name="height">
+                    </div>
+                    <div class="form-group small">
+                        <label>Weight น้ำหนัก (kg.)</label>
+                        <input type="number" name="weight">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Family Record -->
+            <div class="section">
+                <div class="section-title">FAMILY RECORD ประวัติครอบครัว</div>
+                <p style="font-size: 12px; color: #666;">(Particulard of your parents, brothers & sisters โปรดระบุชื่อบิดา มารดา)</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name ชื่อ</th>
+                            <th>Relationship ความสัมพันธ์</th>
+                            <th>Age อายุ</th>
+                            <th>Occupation อาชีพ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="family1Name"></td>
+                            <td><input type="text" name="family1Relation" value="บิดา/Father"></td>
+                            <td><input type="number" name="family1Age"></td>
+                            <td><input type="text" name="family1Occupation"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="family2Name"></td>
+                            <td><input type="text" name="family2Relation" value="มารดา/Mother"></td>
+                            <td><input type="number" name="family2Age"></td>
+                            <td><input type="text" name="family2Occupation"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="family3Name"></td>
+                            <td><input type="text" name="family3Relation"></td>
+                            <td><input type="number" name="family3Age"></td>
+                            <td><input type="text" name="family3Occupation"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="family4Name"></td>
+                            <td><input type="text" name="family4Relation"></td>
+                            <td><input type="number" name="family4Age"></td>
+                            <td><input type="text" name="family4Occupation"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="form-row" style="margin-top: 15px;">
+                    <div class="form-group">
+                        <label>Marital Status สถานภาพสมรส</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="maritalStatus" value="single"> Single โสด</label>
+                            <label><input type="radio" name="maritalStatus" value="married"> Married แต่งงาน</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Spouse's name ชื่อคู่สมรส</label>
+                        <input type="text" name="spouseName">
+                    </div>
+                    <div class="form-group">
+                        <label>Occupation อาชีพ</label>
+                        <input type="text" name="spouseOccupation">
+                    </div>
+                    <div class="form-group small">
+                        <label>No. of Children จำนวนบุตร</label>
+                        <input type="number" name="numberOfChildren">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Contact -->
+            <div class="section">
+                <div class="section-title">EMERGENCY CONTACT บุคคลติดต่อในกรณีฉุกเฉิน</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Name ชื่อ *</label>
+                        <input type="text" name="emergencyName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Relationship ความสัมพันธ์</label>
+                        <input type="text" name="emergencyRelation">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full">
+                        <label>Address ที่อยู่</label>
+                        <input type="text" name="emergencyAddress">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Mobile Phone โทรศัพท์มือถือ *</label>
+                        <input type="tel" name="emergencyPhone" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Record -->
+            <div class="section">
+                <div class="section-title">EDUCATIONAL RECORD ประวัติการศึกษา</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Degree ระดับการศึกษา</th>
+                            <th>Year Graduated ปีที่จบการศึกษา</th>
+                            <th>Name of Institution ชื่อสถาบัน</th>
+                            <th>Major วิชาเอก</th>
+                            <th>GPA เกรด</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>High School มัธยมศึกษา</td>
+                            <td><input type="text" name="highSchoolYear"></td>
+                            <td><input type="text" name="highSchoolName"></td>
+                            <td><input type="text" name="highSchoolMajor"></td>
+                            <td><input type="text" name="highSchoolGpa"></td>
+                        </tr>
+                        <tr>
+                            <td>Diploma อนุปริญญา</td>
+                            <td><input type="text" name="diplomaYear"></td>
+                            <td><input type="text" name="diplomaName"></td>
+                            <td><input type="text" name="diplomaMajor"></td>
+                            <td><input type="text" name="diplomaGpa"></td>
+                        </tr>
+                        <tr>
+                            <td>Bachelor ปริญญาตรี</td>
+                            <td><input type="text" name="bachelorYear"></td>
+                            <td><input type="text" name="bachelorName"></td>
+                            <td><input type="text" name="bachelorMajor"></td>
+                            <td><input type="text" name="bachelorGpa"></td>
+                        </tr>
+                        <tr>
+                            <td>Master ปริญญาโท</td>
+                            <td><input type="text" name="masterYear"></td>
+                            <td><input type="text" name="masterName"></td>
+                            <td><input type="text" name="masterMajor"></td>
+                            <td><input type="text" name="masterGpa"></td>
+                        </tr>
+                        <tr>
+                            <td>Others อื่นๆ</td>
+                            <td><input type="text" name="othersYear"></td>
+                            <td><input type="text" name="othersName"></td>
+                            <td><input type="text" name="othersMajor"></td>
+                            <td><input type="text" name="othersGpa"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Special Skills -->
+            <div class="section">
+                <div class="section-title">SPECIAL SKILL ความสามารถพิเศษ</div>
+                <table class="skill-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">Foreign Languages</th>
+                            <th colspan="4">Spoken พูด</th>
+                            <th colspan="4">Written เขียน</th>
+                            <th colspan="4">Understand เข้าใจ</th>
+                        </tr>
+                        <tr>
+                            <th>ดีมาก</th>
+                            <th>ดี</th>
+                            <th>พอใช้</th>
+                            <th>ไม่ได้</th>
+                            <th>ดีมาก</th>
+                            <th>ดี</th>
+                            <th>พอใช้</th>
+                            <th>ไม่ได้</th>
+                            <th>ดีมาก</th>
+                            <th>ดี</th>
+                            <th>พอใช้</th>
+                            <th>ไม่ได้</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>English ภาษาอังกฤษ</td>
+                            <td><input type="radio" name="englishSpoken" value="excellent"></td>
+                            <td><input type="radio" name="englishSpoken" value="good"></td>
+                            <td><input type="radio" name="englishSpoken" value="fair"></td>
+                            <td><input type="radio" name="englishSpoken" value="no"></td>
+                            <td><input type="radio" name="englishWritten" value="excellent"></td>
+                            <td><input type="radio" name="englishWritten" value="good"></td>
+                            <td><input type="radio" name="englishWritten" value="fair"></td>
+                            <td><input type="radio" name="englishWritten" value="no"></td>
+                            <td><input type="radio" name="englishUnderstand" value="excellent"></td>
+                            <td><input type="radio" name="englishUnderstand" value="good"></td>
+                            <td><input type="radio" name="englishUnderstand" value="fair"></td>
+                            <td><input type="radio" name="englishUnderstand" value="no"></td>
+                        </tr>
+                        <tr>
+                            <td>Others ภาษาอื่นๆ <input type="text" name="otherLanguage" style="width: 80px;"></td>
+                            <td><input type="radio" name="otherLangSpoken" value="excellent"></td>
+                            <td><input type="radio" name="otherLangSpoken" value="good"></td>
+                            <td><input type="radio" name="otherLangSpoken" value="fair"></td>
+                            <td><input type="radio" name="otherLangSpoken" value="no"></td>
+                            <td><input type="radio" name="otherLangWritten" value="excellent"></td>
+                            <td><input type="radio" name="otherLangWritten" value="good"></td>
+                            <td><input type="radio" name="otherLangWritten" value="fair"></td>
+                            <td><input type="radio" name="otherLangWritten" value="no"></td>
+                            <td><input type="radio" name="otherLangUnderstand" value="excellent"></td>
+                            <td><input type="radio" name="otherLangUnderstand" value="good"></td>
+                            <td><input type="radio" name="otherLangUnderstand" value="fair"></td>
+                            <td><input type="radio" name="otherLangUnderstand" value="no"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="form-row" style="margin-top: 15px;">
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <input type="checkbox" name="hasComputer" style="width: auto; margin: 0;">
+                            <span>Computer คอมพิวเตอร์</span>
+                        </div>
+                        <input type="text" name="computerSkills" placeholder="ระบุโปรแกรม...">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <input type="checkbox" name="hasDrivingCar" style="width: auto; margin: 0;">
+                            <span>Driving การขับขี่รถยนต์</span>
+                        </div>
+                        <input type="text" name="carLicenseNo" placeholder="Driver Licence No.">
+                    </div>
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <input type="checkbox" name="hasDrivingMotor" style="width: auto; margin: 0;">
+                            <span>Driving การขับขี่จักรยานยนต์</span>
+                        </div>
+                        <input type="text" name="motorLicenseNo" placeholder="Driver Licence No.">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full">
+                        <label>Others อื่นๆ</label>
+                        <input type="text" name="otherSkills">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Training -->
+            <div class="section">
+                <div class="section-title">PROFESSIONAL TRAINING ประวัติการฝึกอบรม (Curriculums หลักสูตร)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Course Name หลักสูตร</th>
+                            <th>Institution สถาบัน</th>
+                            <th>Year ปี</th>
+                            <th>Duration ระยะเวลา</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="training1Course"></td>
+                            <td><input type="text" name="training1Institution"></td>
+                            <td><input type="text" name="training1Year"></td>
+                            <td><input type="text" name="training1Duration"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="training2Course"></td>
+                            <td><input type="text" name="training2Institution"></td>
+                            <td><input type="text" name="training2Year"></td>
+                            <td><input type="text" name="training2Duration"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="training3Course"></td>
+                            <td><input type="text" name="training3Institution"></td>
+                            <td><input type="text" name="training3Year"></td>
+                            <td><input type="text" name="training3Duration"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Employment Record -->
+            <div class="section">
+                <div class="section-title">EMPLOYMENT RECORD ประวัติการทำงาน</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Period Time ระยะเวลา</th>
+                            <th>List of Company ชื่อสถานประกอบการ</th>
+                            <th>Position ตำแหน่ง</th>
+                            <th>Responsibilities หน้าที่รับผิดชอบ</th>
+                            <th>Salary เงินเดือน</th>
+                            <th>Reason for Leaving เหตุผลที่ลาออก</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="work1Period"></td>
+                            <td><input type="text" name="work1Company"></td>
+                            <td><input type="text" name="work1Position"></td>
+                            <td><input type="text" name="work1Responsibilities"></td>
+                            <td><input type="text" name="work1Salary"></td>
+                            <td><input type="text" name="work1Reason"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="work2Period"></td>
+                            <td><input type="text" name="work2Company"></td>
+                            <td><input type="text" name="work2Position"></td>
+                            <td><input type="text" name="work2Responsibilities"></td>
+                            <td><input type="text" name="work2Salary"></td>
+                            <td><input type="text" name="work2Reason"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="work3Period"></td>
+                            <td><input type="text" name="work3Company"></td>
+                            <td><input type="text" name="work3Position"></td>
+                            <td><input type="text" name="work3Responsibilities"></td>
+                            <td><input type="text" name="work3Salary"></td>
+                            <td><input type="text" name="work3Reason"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Other Questions -->
+            <div class="section">
+                <div class="section-title">OTHER ข้อมูลด้านอื่นๆ</div>
+
+                <div class="yes-no-question">
+                    <span>1. Have you ever applied or worked with I C P Group before?<br>
+                    <small>ท่านเคยสมัครหรือทำงานในกลุ่มบริษัทในเครือ ไอ ซี พี มาก่อนหรือไม่?</small></span>
+                    <div class="radio-group">
+                        <label><input type="radio" name="q1WorkedBefore" value="yes"> Yes เคย</label>
+                        <label><input type="radio" name="q1WorkedBefore" value="no"> No ไม่เคย</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>If yes, please give details ถ้าเคยโปรดระบุ</label>
+                    <input type="text" name="q1Details">
+                </div>
+
+                <div class="yes-no-question">
+                    <span>2. Do you have any relatives or friends working in I C P Group?<br>
+                    <small>ท่านมีญาติพี่น้องหรือคนรู้จักทำงานในกลุ่มบริษัทในเครือ ไอ ซี พี หรือไม่?</small></span>
+                    <div class="radio-group">
+                        <label><input type="radio" name="q2Relatives" value="yes"> Yes เคย</label>
+                        <label><input type="radio" name="q2Relatives" value="no"> No ไม่เคย</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>If yes, please give details ถ้าเคยโปรดระบุ</label>
+                    <input type="text" name="q2Details">
+                </div>
+
+                <div class="yes-no-question">
+                    <span>3. Have you ever been convicted for any crimes?<br>
+                    <small>ท่านเคยถูกตัดสินด้าเนินคดีหรือไม่?</small></span>
+                    <div class="radio-group">
+                        <label><input type="radio" name="q3Convicted" value="yes"> Yes เคย</label>
+                        <label><input type="radio" name="q3Convicted" value="no"> No ไม่เคย</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>If yes, please give details ถ้าเคยโปรดระบุ</label>
+                    <input type="text" name="q3Details">
+                </div>
+
+                <div class="yes-no-question">
+                    <span>4. Have you ever been seriously ill within the past 5 years?<br>
+                    <small>ในระยะ 5 ปีที่ผ่านมา ท่านเคยป่วยเป็นโรคติดต่อร้ายแรงหรือไม่?</small></span>
+                    <div class="radio-group">
+                        <label><input type="radio" name="q4Illness" value="yes"> Yes เคย</label>
+                        <label><input type="radio" name="q4Illness" value="no"> No ไม่เคย</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>If yes, please give details ถ้าเคยโปรดระบุ</label>
+                    <input type="text" name="q4Details">
+                </div>
+
+                <div class="yes-no-question">
+                    <span>5. Do you have color blindness?<br>
+                    <small>ท่านมีภาวะตาบอดสีหรือไม่?</small></span>
+                    <div class="radio-group">
+                        <label><input type="radio" name="q5ColorBlind" value="yes"> Yes มี</label>
+                        <label><input type="radio" name="q5ColorBlind" value="no"> No ไม่มี</label>
+                    </div>
+                </div>
+
+                <div class="yes-no-question">
+                    <span>6. Are you pregnant at the moment?<br>
+                    <small>ขณะนี้ท่านอยู่ในระหว่างการตั้งครรภ์หรือไม่?</small></span>
+                    <div class="radio-group">
+                        <label><input type="radio" name="q6Pregnant" value="yes"> Yes มี</label>
+                        <label><input type="radio" name="q6Pregnant" value="no"> No ไม่มี</label>
+                    </div>
+                </div>
+
+                <div class="yes-no-question">
+                    <span>7. Have you ever been seriously or contracted with contagious disease?<br>
+                    <small>ท่านเคยป่วยหนักและเป็นโรคติดต่อร้ายแรงมาก่อนหรือไม่?</small></span>
+                    <div class="radio-group">
+                        <label><input type="radio" name="q7Contagious" value="yes"> Yes เคย</label>
+                        <label><input type="radio" name="q7Contagious" value="no"> No ไม่เคย</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Declaration -->
+            <div class="section">
+                <p style="font-size: 12px; text-align: justify;">
+                    I understand that any falsified statement on this application can be sufficient cause for dismissal if I am employed.<br>
+                    ข้าพเจ้ายอมรับว่าข้อความข้างต้นเป็นความจริงทุกประการ การปิดบังความจริงใดๆ จะทำให้ข้าพเจ้าหมดสิทธิ์
+                    ในการได้รับการพิจารณาว่าจ้างงานหรืออาจถูกปลดออกจากงานในกรณีแบริษัทฯ ได้ว่าจ้างข้าพเจ้าแล้ว
+                </p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Signature ลายมือชื่อผู้สมัคร</label>
+                        <input type="text" name="signature">
+                    </div>
+                    <div class="form-group">
+                        <label>Date วัน เดือน ปี</label>
+                        <input type="date" name="signatureDate">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions">
+                <button type="submit" class="btn btn-success">📤 ส่งใบสมัคร</button>
+                <button type="button" class="btn btn-secondary" onclick="downloadPDF()">📥 Download PDF</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const API_BASE = '';
+
+        // Parse Resume with OpenAI
+        async function parseResume() {
+            const fileInput = document.getElementById('resumeFile');
+            if (!fileInput.files[0]) {
+                alert('กรุณาเลือกไฟล์ Resume');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('resume', fileInput.files[0]);
+
+            document.getElementById('loadingIndicator').classList.add('show');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/parse-resume`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    fillForm(data.data);
+                    alert('กรอกข้อมูลจาก Resume สำเร็จ!');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error parsing resume: ' + error.message);
+            } finally {
+                document.getElementById('loadingIndicator').classList.remove('show');
+            }
+        }
+
+        // Fill form with parsed data
+        function fillForm(data) {
+            const form = document.getElementById('applicationForm');
+            for (const [key, value] of Object.entries(data)) {
+                const input = form.elements[key];
+                if (input) {
+                    if (input.type === 'radio') {
+                        const radio = form.querySelector(`input[name="${key}"][value="${value}"]`);
+                        if (radio) radio.checked = true;
+                    } else if (input.type === 'checkbox') {
+                        input.checked = value;
+                    } else {
+                        input.value = value;
+                    }
+                }
+            }
+        }
+
+        // Submit form
+        document.getElementById('applicationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch(`${API_BASE}/api/submit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('ส่งใบสมัครสำเร็จ! Application ID: ' + result.id);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error submitting form: ' + error.message);
+            }
+        });
+
+        // Download PDF
+        async function downloadPDF() {
+            const formData = new FormData(document.getElementById('applicationForm'));
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch(`${API_BASE}/api/generate-pdf`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'employment-application.pdf';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                alert('Error generating PDF: ' + error.message);
+            }
+        }
+
+        // Auto calculate age from birth date
+        document.querySelector('input[name="birthDate"]').addEventListener('change', (e) => {
+            const birthDate = new Date(e.target.value);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            document.querySelector('input[name="age"]').value = age;
+        });
+    </script>
+</body>
+</html>
