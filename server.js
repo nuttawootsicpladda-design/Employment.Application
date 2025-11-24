@@ -17,15 +17,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// File upload config
+// File upload config - use /tmp for serverless environments
+const uploadDir = process.env.VERCEL ? '/tmp/uploads' : 'uploads';
 const upload = multer({
-    dest: 'uploads/',
+    dest: uploadDir,
     limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
 
 // Create uploads directory if not exists
-if (!fs.existsSync('uploads')) {
-    fs.mkdirSync('uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 // Supabase client
