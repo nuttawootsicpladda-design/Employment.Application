@@ -504,7 +504,7 @@
                         <option value="accepted">Accepted</option>
                         <option value="rejected">Rejected</option>
                     </select>
-                    <button class="btn btn-primary" onclick="refreshData()">🔄 Refresh</button>
+                    <button class="btn btn-primary" onclick="refreshData()">Refresh</button>
                 </div>
             </div>
 
@@ -668,9 +668,21 @@
                     '<td>' + (app.mobile || '-') + '<br><small style="color: #999;">' + (app.email || '-') + '</small></td>' +
                     '<td>' + formatDate(app.created_at) + '</td>' +
                     '<td><div class="action-buttons">' +
-                    '<button class="action-btn view" onclick="viewDetails(' + app.id + ')">View</button>' +
-                    '<button class="action-btn pdf" onclick="printApplication(' + app.id + ')">Print</button>' +
+                    '<button class="action-btn view" data-id="' + app.id + '">View</button>' +
+                    '<button class="action-btn pdf" data-id="' + app.id + '">Print</button>' +
                     '</div></td>';
+
+                const viewBtn = row.querySelector('.action-btn.view');
+                const printBtn = row.querySelector('.action-btn.pdf');
+
+                viewBtn.addEventListener('click', function() {
+                    viewDetails(app.id);
+                });
+
+                printBtn.addEventListener('click', function() {
+                    printApplication(app.id);
+                });
+
                 tableBody.appendChild(row);
             });
 
@@ -841,16 +853,31 @@
 
                     '<div class="status-update">' +
                     '<label style="font-weight: 600; color: #5f27cd;">Update Status:</label>' +
-                    '<select id="statusSelect" onchange="updateStatus(' + app.id + ', this.value)">' +
+                    '<select id="statusSelect" data-app-id="' + app.id + '">' +
                     '<option value="pending"' + (app.status === 'pending' ? ' selected' : '') + '>Pending</option>' +
                     '<option value="reviewing"' + (app.status === 'reviewing' ? ' selected' : '') + '>Reviewing</option>' +
                     '<option value="accepted"' + (app.status === 'accepted' ? ' selected' : '') + '>Accepted</option>' +
                     '<option value="rejected"' + (app.status === 'rejected' ? ' selected' : '') + '>Rejected</option>' +
                     '</select>' +
-                    '<button class="btn btn-success" onclick="printApplication(' + app.id + ')">Print Application</button>' +
+                    '<button class="btn btn-success" id="modalPrintBtn" data-app-id="' + app.id + '">Print Application</button>' +
                     '</div>';
 
                 document.getElementById('detailContent').innerHTML = content;
+
+                // Add event listeners for status select and print button
+                var statusSelect = document.getElementById('statusSelect');
+                var modalPrintBtn = document.getElementById('modalPrintBtn');
+
+                statusSelect.addEventListener('change', function() {
+                    var appId = parseInt(this.getAttribute('data-app-id'));
+                    updateStatus(appId, this.value);
+                });
+
+                modalPrintBtn.addEventListener('click', function() {
+                    var appId = parseInt(this.getAttribute('data-app-id'));
+                    printApplication(appId);
+                });
+
                 document.getElementById('detailModal').classList.add('show');
             } catch (error) {
                 console.error('Error:', error);
