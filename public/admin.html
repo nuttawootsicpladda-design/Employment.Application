@@ -518,12 +518,10 @@
                 <table id="applicationsTable" style="display: none;">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Full Name</th>
                             <th>Position</th>
                             <th>Contact</th>
                             <th>Applied Date</th>
-                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -665,7 +663,6 @@
             // Render table rows
             tableBody.innerHTML = pageData.map(app => `
                 <tr>
-                    <td>#${app.id}</td>
                     <td>
                         <strong>${app.firstNameEn || ''} ${app.lastNameEn || ''}</strong><br>
                         <small style="color: #999;">${app.firstNameTh || ''} ${app.lastNameTh || ''}</small>
@@ -677,14 +674,9 @@
                     </td>
                     <td>${formatDate(app.created_at)}</td>
                     <td>
-                        <span class="status-badge status-${app.status || 'pending'}">
-                            ${getStatusText(app.status || 'pending')}
-                        </span>
-                    </td>
-                    <td>
                         <div class="action-buttons">
                             <button class="action-btn view" onclick="viewDetails(${app.id})">👁️ View</button>
-                            <button class="action-btn pdf" onclick="downloadPDF(${app.id})">📄 PDF</button>
+                            <button class="action-btn pdf" onclick="printApplication(${app.id})">🖨️ Print</button>
                         </div>
                     </td>
                 </tr>
@@ -857,7 +849,7 @@
                             <option value="accepted" ${app.status === 'accepted' ? 'selected' : ''}>Accepted</option>
                             <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Rejected</option>
                         </select>
-                        <button class="btn btn-success" onclick="downloadPDF(${app.id})">📄 Download PDF</button>
+                        <button class="btn btn-success" onclick="printApplication(${app.id})">🖨️ Print Application</button>
                     </div>
                 `;
 
@@ -900,31 +892,79 @@
             }
         }
 
-        async function downloadPDF(id) {
+        async function printApplication(id) {
             try {
                 const app = allApplications.find(a => a.id === id);
                 if (!app) return;
 
-                const response = await fetch(`${API_BASE}/api/generate-pdf`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(app)
-                });
+                // Open index.html in a new window with pre-filled data
+                const printWindow = window.open('/', '_blank');
 
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `application-${id}-${app.firstNameEn}-${app.lastNameEn}.pdf`;
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                } else {
-                    alert('Error generating PDF');
-                }
+                // Wait for the page to load
+                printWindow.onload = function() {
+                    // Wait a bit more for the form to be ready
+                    setTimeout(() => {
+                        fillFormAndPrint(printWindow, app);
+                    }, 1000);
+                };
             } catch (error) {
                 console.error('Error:', error);
-                alert('Failed to download PDF');
+                alert('Failed to open print window');
+            }
+        }
+
+        function fillFormAndPrint(printWindow, data) {
+            try {
+                const form = printWindow.document.getElementById('applicationForm');
+                if (!form) {
+                    console.error('Form not found');
+                    return;
+                }
+
+                // Fill all form fields
+                for (const [key, value] of Object.entries(data)) {
+                    const input = form.elements[key];
+                    if (input) {
+                        if (input.type === 'radio') {
+                            const radio = form.querySelector(`input[name="${key}"][value="${value}"]`);
+                            if (radio) radio.checked = true;
+                        } else if (input.type === 'checkbox') {
+                            input.checked = Boolean(value);
+                        } else {
+                            input.value = value || '';
+                        }
+                    }
+                }
+
+                // Fill photo if exists
+                if (data.photo) {
+                    const photoPreview = printWindow.document.getElementById('photoPreview');
+                    const photoPlaceholder = printWindow.document.getElementById('photoPlaceholder');
+                    if (photoPreview && photoPlaceholder) {
+                        photoPreview.src = data.photo;
+                        photoPreview.style.display = 'block';
+                        photoPlaceholder.style.display = 'none';
+                    }
+                }
+
+                // Fill signature if exists
+                if (data.signature) {
+                    const signatureDisplay = printWindow.document.getElementById('signatureDisplay');
+                    const signaturePlaceholder = printWindow.document.getElementById('signaturePlaceholder');
+                    if (signatureDisplay && signaturePlaceholder) {
+                        signatureDisplay.src = data.signature;
+                        signatureDisplay.style.display = 'block';
+                        signaturePlaceholder.style.display = 'none';
+                    }
+                }
+
+                // Wait a moment for rendering, then print
+                setTimeout(() => {
+                    printWindow.print();
+                }, 500);
+            } catch (error) {
+                console.error('Error filling form:', error);
+                alert('Failed to fill form data');
             }
         }
 
