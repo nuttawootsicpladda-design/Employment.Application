@@ -921,8 +921,11 @@
                 const app = allApplications.find(a => a.id === id);
                 if (!app) return;
 
+                // Get the base URL (works both locally and on Vercel)
+                const baseUrl = window.location.origin;
+
                 // Open index.html in a new window with pre-filled data
-                const printWindow = window.open('/', '_blank');
+                const printWindow = window.open(baseUrl + '/', '_blank');
 
                 // Wait for the page to load
                 printWindow.onload = function() {
