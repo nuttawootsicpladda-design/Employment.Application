@@ -16,6 +16,10 @@
       "dest": "/public/Logo.png"
     },
     {
+      "src": "/admin",
+      "dest": "/public/admin.html"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "server.js"
     },

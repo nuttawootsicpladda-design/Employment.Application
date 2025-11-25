@@ -648,6 +648,53 @@ app.get('/api/applications/:id', async (req, res) => {
     }
 });
 
+// Update application status
+app.patch('/api/applications/:id/status', async (req, res) => {
+    try {
+        const { status } = req.body;
+        const { id } = req.params;
+
+        if (!['pending', 'reviewing', 'accepted', 'rejected'].includes(status)) {
+            return res.status(400).json({ success: false, error: 'Invalid status' });
+        }
+
+        const { data, error } = await supabase
+            .from('applications')
+            .update({ status, updated_at: new Date().toISOString() })
+            .eq('id', id)
+            .select();
+
+        if (error) throw error;
+
+        res.json({ success: true, data: data[0] });
+    } catch (error) {
+        console.error('Error updating status:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Delete application
+app.delete('/api/applications/:id', async (req, res) => {
+    try {
+        const { error } = await supabase
+            .from('applications')
+            .delete()
+            .eq('id', req.params.id);
+
+        if (error) throw error;
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting application:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Admin route
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
 // Root route - serve index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
