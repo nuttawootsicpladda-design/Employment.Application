@@ -556,9 +556,34 @@
         let currentPage = 1;
         const itemsPerPage = 10;
 
+        // Check authentication on page load
+        function checkAuth() {
+            const authToken = sessionStorage.getItem('adminAuth');
+            const adminUser = sessionStorage.getItem('adminUser');
+
+            if (!authToken || !adminUser) {
+                // Not logged in, redirect to login page
+                window.location.href = '/login';
+                return false;
+            }
+
+            // Update user info in header
+            const userInfoDiv = document.querySelector('.user-info > div');
+            if (userInfoDiv) {
+                userInfoDiv.innerHTML = `
+                    <div style="font-weight: 600; color: #5f27cd;">Admin User</div>
+                    <div style="font-size: 12px; color: #999;">${adminUser}</div>
+                `;
+            }
+
+            return true;
+        }
+
         // Load applications on page load
         window.onload = () => {
-            loadApplications();
+            if (checkAuth()) {
+                loadApplications();
+            }
         };
 
         async function loadApplications() {
@@ -924,7 +949,12 @@
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
-                window.location.href = '/';
+                // Clear authentication
+                sessionStorage.removeItem('adminAuth');
+                sessionStorage.removeItem('adminUser');
+
+                // Redirect to login page
+                window.location.href = '/login';
             }
         }
 

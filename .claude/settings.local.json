@@ -18,7 +18,8 @@
       "Bash(git rm:*)",
       "Bash(.gitignore)",
       "WebFetch(domain:madbox.io)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(npm start)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Employment Application</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Prompt', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px 40px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-header .icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+
+        .login-header h1 {
+            margin: 0 0 10px 0;
+            color: #5f27cd;
+            font-size: 32px;
+        }
+
+        .login-header p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #5f27cd;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 20px;
+            color: #999;
+            user-select: none;
+        }
+
+        .password-toggle:hover {
+            color: #667eea;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            display: none;
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border-left: 4px solid #c62828;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #667eea;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+
+        /* Decorative elements */
+        .decoration {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .decoration-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #667eea, transparent);
+            top: -150px;
+            left: -150px;
+        }
+
+        .decoration-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, transparent, #764ba2);
+            bottom: -200px;
+            right: -200px;
+        }
+
+        @media (max-width: 576px) {
+            .login-container {
+                padding: 40px 30px;
+            }
+
+            .login-header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="decoration decoration-1"></div>
+    <div class="decoration decoration-2"></div>
+
+    <div class="login-container">
+        <div class="login-header">
+            <div class="icon">🔐</div>
+            <h1>Admin Login</h1>
+            <p>Employment Application Management System</p>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Email / Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your email"
+                    required
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-container">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                        autocomplete="current-password"
+                    >
+                    <span class="password-toggle" onclick="togglePassword()">👁️</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login" id="loginBtn">
+                🚀 Login to Dashboard
+            </button>
+
+            <div class="loading" id="loading">
+                <span class="spinner"></span>
+                Logging in...
+            </div>
+        </form>
+
+        <div class="back-link">
+            <a href="/">← Back to Application Form</a>
+        </div>
+    </div>
+
+    <script>
+        // Admin credentials (In production, this should be handled server-side)
+        const ADMIN_CREDENTIALS = {
+            username: 'itadmin@icpladda.com',
+            password: 'P@ss2025!'
+        };
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggle = document.querySelector('.password-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggle.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggle.textContent = '👁️';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+
+            setTimeout(() => {
+                errorDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const loading = document.getElementById('loading');
+
+            // Hide previous errors
+            document.getElementById('errorMessage').classList.remove('show');
+
+            // Show loading
+            loginBtn.disabled = true;
+            loading.classList.add('show');
+
+            // Simulate API call delay
+            await new Promise(resolve => setTimeout(resolve, 800));
+
+            // Check credentials
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                // Store authentication token
+                const authToken = btoa(`${username}:${Date.now()}`);
+                sessionStorage.setItem('adminAuth', authToken);
+                sessionStorage.setItem('adminUser', username);
+
+                // Success - redirect to admin dashboard
+                window.location.href = '/admin';
+            } else {
+                // Failed login
+                showError('❌ Invalid email or password. Please try again.');
+                loginBtn.disabled = false;
+                loading.classList.remove('show');
+
+                // Clear password field
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+            }
+        }
+
+        // Check if already logged in
+        window.onload = () => {
+            const authToken = sessionStorage.getItem('adminAuth');
+            if (authToken) {
+                // Already logged in, redirect to admin
+                window.location.href = '/admin';
+            }
+
+            // Focus on username field
+            document.getElementById('username').focus();
+        };
+
+        // Enable Enter key on password field
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleLogin(e);
+            }
+        });
+    </script>
+</body>
+</html>
