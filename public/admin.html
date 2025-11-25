@@ -588,7 +588,7 @@
                 document.getElementById('applicationsTable').style.display = 'none';
                 document.getElementById('emptyState').style.display = 'none';
 
-                const response = await fetch(`${API_BASE}/api/applications`);
+                const response = await fetch(API_BASE + '/api/applications');
                 const result = await response.json();
 
                 if (result.success) {
@@ -659,31 +659,25 @@
             const pageData = filteredApplications.slice(startIndex, endIndex);
 
             // Render table rows
-            tableBody.innerHTML = pageData.map(app => `
-                <tr>
-                    <td>
-                        <strong>${app.firstNameEn || ''} ${app.lastNameEn || ''}</strong><br>
-                        <small style="color: #999;">${app.firstNameTh || ''} ${app.lastNameTh || ''}</small>
-                    </td>
-                    <td>${app.positionApplied || '-'}</td>
-                    <td>
-                        ${app.mobile || '-'}<br>
-                        <small style="color: #999;">${app.email || '-'}</small>
-                    </td>
-                    <td>${formatDate(app.created_at)}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn view" onclick="viewDetails(${app.id})">View</button>
-                            <button class="action-btn pdf" onclick="printApplication(${app.id})">Print</button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+            tableBody.innerHTML = '';
+            pageData.forEach(app => {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td><strong>' + (app.firstNameEn || '') + ' ' + (app.lastNameEn || '') + '</strong><br>' +
+                    '<small style="color: #999;">' + (app.firstNameTh || '') + ' ' + (app.lastNameTh || '') + '</small></td>' +
+                    '<td>' + (app.positionApplied || '-') + '</td>' +
+                    '<td>' + (app.mobile || '-') + '<br><small style="color: #999;">' + (app.email || '-') + '</small></td>' +
+                    '<td>' + formatDate(app.created_at) + '</td>' +
+                    '<td><div class="action-buttons">' +
+                    '<button class="action-btn view" onclick="viewDetails(' + app.id + ')">View</button>' +
+                    '<button class="action-btn pdf" onclick="printApplication(' + app.id + ')">Print</button>' +
+                    '</div></td>';
+                tableBody.appendChild(row);
+            });
 
             // Update pagination
             if (totalPages > 1) {
                 pagination.style.display = 'flex';
-                document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+                document.getElementById('pageInfo').textContent = 'Page ' + currentPage + ' of ' + totalPages;
                 document.getElementById('prevBtn').disabled = currentPage === 1;
                 document.getElementById('nextBtn').disabled = currentPage === totalPages;
             } else {
@@ -718,138 +712,143 @@
                 const app = allApplications.find(a => a.id === id);
                 if (!app) return;
 
-                const content = `
-                    <div class="detail-section">
-                        <h3>Personal Information</h3>
-                        <div class="detail-grid">
-                            <div class="detail-item">
-                                <label>Full Name (Thai)</label>
-                                <div class="value">${app.prefixTh || ''} ${app.firstNameTh || ''} ${app.lastNameTh || ''}</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>Full Name (English)</label>
-                                <div class="value">${app.prefixEn || ''} ${app.firstNameEn || ''} ${app.lastNameEn || ''}</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>Nickname</label>
-                                <div class="value">${app.nickname || '-'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>Birth Date / Age</label>
-                                <div class="value">${app.birthDate || '-'} / ${app.age || '-'} years</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>ID Card</label>
-                                <div class="value">${app.idCard || '-'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>Sex</label>
-                                <div class="value">${app.sex || '-'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>Blood Type</label>
-                                <div class="value">${app.bloodType || '-'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>Religion</label>
-                                <div class="value">${app.religion || '-'}</div>
-                            </div>
-                        </div>
-                    </div>
+                var content = '<div class="detail-section">' +
+                    '<h3>Personal Information</h3>' +
+                    '<div class="detail-grid">' +
+                    '<div class="detail-item">' +
+                    '<label>Full Name (Thai)</label>' +
+                    '<div class="value">' + (app.prefixTh || '') + ' ' + (app.firstNameTh || '') + ' ' + (app.lastNameTh || '') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>Full Name (English)</label>' +
+                    '<div class="value">' + (app.prefixEn || '') + ' ' + (app.firstNameEn || '') + ' ' + (app.lastNameEn || '') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>Nickname</label>' +
+                    '<div class="value">' + (app.nickname || '-') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>Birth Date / Age</label>' +
+                    '<div class="value">' + (app.birthDate || '-') + ' / ' + (app.age || '-') + ' years</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>ID Card</label>' +
+                    '<div class="value">' + (app.idCard || '-') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>Sex</label>' +
+                    '<div class="value">' + (app.sex || '-') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>Blood Type</label>' +
+                    '<div class="value">' + (app.bloodType || '-') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>Religion</label>' +
+                    '<div class="value">' + (app.religion || '-') + '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
 
-                    <div class="detail-section">
-                        <h3>Contact Information</h3>
-                        <div class="detail-grid">
-                            <div class="detail-item">
-                                <label>Mobile Phone</label>
-                                <div class="value">${app.mobile || '-'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>Email</label>
-                                <div class="value">${app.email || '-'}</div>
-                            </div>
-                            <div class="detail-item" style="grid-column: 1 / -1;">
-                                <label>Address</label>
-                                <div class="value">${app.address || '-'}, ${app.district || ''}, ${app.province || ''} ${app.zipCode || ''}</div>
-                            </div>
-                        </div>
-                    </div>
+                    '<div class="detail-section">' +
+                    '<h3>Contact Information</h3>' +
+                    '<div class="detail-grid">' +
+                    '<div class="detail-item">' +
+                    '<label>Mobile Phone</label>' +
+                    '<div class="value">' + (app.mobile || '-') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>Email</label>' +
+                    '<div class="value">' + (app.email || '-') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item" style="grid-column: 1 / -1;">' +
+                    '<label>Address</label>' +
+                    '<div class="value">' + (app.address || '-') + ', ' + (app.district || '') + ', ' + (app.province || '') + ' ' + (app.zipCode || '') + '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
 
-                    <div class="detail-section">
-                        <h3>Application Details</h3>
-                        <div class="detail-grid">
-                            <div class="detail-item">
-                                <label>Position Applied</label>
-                                <div class="value">${app.positionApplied || '-'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>Expected Salary</label>
-                                <div class="value">${app.expectedSalary || '-'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>Applied Date</label>
-                                <div class="value">${formatDate(app.created_at)}</div>
-                            </div>
-                        </div>
-                    </div>
+                    '<div class="detail-section">' +
+                    '<h3>Application Details</h3>' +
+                    '<div class="detail-grid">' +
+                    '<div class="detail-item">' +
+                    '<label>Position Applied</label>' +
+                    '<div class="value">' + (app.positionApplied || '-') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>Expected Salary</label>' +
+                    '<div class="value">' + (app.expectedSalary || '-') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>Applied Date</label>' +
+                    '<div class="value">' + formatDate(app.created_at) + '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
 
-                    <div class="detail-section">
-                        <h3>Education</h3>
-                        <div class="detail-grid">
-                            ${app.bachelorName ? `
-                                <div class="detail-item">
-                                    <label>Bachelor Degree</label>
-                                    <div class="value">${app.bachelorMajor || ''} - ${app.bachelorName || ''} (${app.bachelorYear || ''})</div>
-                                </div>
-                            ` : ''}
-                            ${app.masterName ? `
-                                <div class="detail-item">
-                                    <label>Master Degree</label>
-                                    <div class="value">${app.masterMajor || ''} - ${app.masterName || ''} (${app.masterYear || ''})</div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
+                    '<div class="detail-section">' +
+                    '<h3>Education</h3>' +
+                    '<div class="detail-grid">';
 
-                    <div class="detail-section">
-                        <h3>Work Experience</h3>
-                        ${app.work1Company ? `
-                            <div class="detail-item" style="margin-bottom: 15px;">
-                                <label>${app.work1Position || ''} at ${app.work1Company || ''}</label>
-                                <div class="value">${app.work1Period || ''} - Salary: ${app.work1Salary || ''}</div>
-                            </div>
-                        ` : '<p style="color: #999;">No work experience provided</p>'}
-                    </div>
+                if (app.bachelorName) {
+                    content += '<div class="detail-item">' +
+                        '<label>Bachelor Degree</label>' +
+                        '<div class="value">' + (app.bachelorMajor || '') + ' - ' + (app.bachelorName || '') + ' (' + (app.bachelorYear || '') + ')</div>' +
+                        '</div>';
+                }
 
-                    <div class="detail-section">
-                        <h3>Emergency Contact</h3>
-                        <div class="detail-grid">
-                            <div class="detail-item">
-                                <label>Name</label>
-                                <div class="value">${app.emergencyName || '-'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>Relationship</label>
-                                <div class="value">${app.emergencyRelation || '-'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <label>Phone</label>
-                                <div class="value">${app.emergencyPhone || '-'}</div>
-                            </div>
-                        </div>
-                    </div>
+                if (app.masterName) {
+                    content += '<div class="detail-item">' +
+                        '<label>Master Degree</label>' +
+                        '<div class="value">' + (app.masterMajor || '') + ' - ' + (app.masterName || '') + ' (' + (app.masterYear || '') + ')</div>' +
+                        '</div>';
+                }
 
-                    <div class="status-update">
-                        <label style="font-weight: 600; color: #5f27cd;">Update Status:</label>
-                        <select id="statusSelect" onchange="updateStatus(${app.id}, this.value)">
-                            <option value="pending" ${app.status === 'pending' ? 'selected' : ''}>Pending</option>
-                            <option value="reviewing" ${app.status === 'reviewing' ? 'selected' : ''}>Reviewing</option>
-                            <option value="accepted" ${app.status === 'accepted' ? 'selected' : ''}>Accepted</option>
-                            <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Rejected</option>
-                        </select>
-                        <button class="btn btn-success" onclick="printApplication(${app.id})">Print Application</button>
-                    </div>
-                `;
+                content += '</div>' +
+                    '</div>' +
+
+                    '<div class="detail-section">' +
+                    '<h3>Work Experience</h3>';
+
+                if (app.work1Company) {
+                    content += '<div class="detail-item" style="margin-bottom: 15px;">' +
+                        '<label>' + (app.work1Position || '') + ' at ' + (app.work1Company || '') + '</label>' +
+                        '<div class="value">' + (app.work1Period || '') + ' - Salary: ' + (app.work1Salary || '') + '</div>' +
+                        '</div>';
+                } else {
+                    content += '<p style="color: #999;">No work experience provided</p>';
+                }
+
+                content += '</div>' +
+
+                    '<div class="detail-section">' +
+                    '<h3>Emergency Contact</h3>' +
+                    '<div class="detail-grid">' +
+                    '<div class="detail-item">' +
+                    '<label>Name</label>' +
+                    '<div class="value">' + (app.emergencyName || '-') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>Relationship</label>' +
+                    '<div class="value">' + (app.emergencyRelation || '-') + '</div>' +
+                    '</div>' +
+                    '<div class="detail-item">' +
+                    '<label>Phone</label>' +
+                    '<div class="value">' + (app.emergencyPhone || '-') + '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+
+                    '<div class="status-update">' +
+                    '<label style="font-weight: 600; color: #5f27cd;">Update Status:</label>' +
+                    '<select id="statusSelect" onchange="updateStatus(' + app.id + ', this.value)">' +
+                    '<option value="pending"' + (app.status === 'pending' ? ' selected' : '') + '>Pending</option>' +
+                    '<option value="reviewing"' + (app.status === 'reviewing' ? ' selected' : '') + '>Reviewing</option>' +
+                    '<option value="accepted"' + (app.status === 'accepted' ? ' selected' : '') + '>Accepted</option>' +
+                    '<option value="rejected"' + (app.status === 'rejected' ? ' selected' : '') + '>Rejected</option>' +
+                    '</select>' +
+                    '<button class="btn btn-success" onclick="printApplication(' + app.id + ')">Print Application</button>' +
+                    '</div>';
 
                 document.getElementById('detailContent').innerHTML = content;
                 document.getElementById('detailModal').classList.add('show');
@@ -865,7 +864,7 @@
 
         async function updateStatus(id, newStatus) {
             try {
-                const response = await fetch(`${API_BASE}/api/applications/${id}/status`, {
+                const response = await fetch(API_BASE + '/api/applications/' + id + '/status', {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: newStatus })
@@ -924,7 +923,7 @@
                     const input = form.elements[key];
                     if (input) {
                         if (input.type === 'radio') {
-                            const radio = form.querySelector(`input[name="${key}"][value="${value}"]`);
+                            const radio = form.querySelector('input[name="' + key + '"][value="' + value + '"]');
                             if (radio) radio.checked = true;
                         } else if (input.type === 'checkbox') {
                             input.checked = Boolean(value);
