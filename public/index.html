@@ -1267,7 +1267,7 @@
             document.getElementById('loadingIndicator').classList.add('show');
 
             try {
-                const response = await fetch(`${API_BASE}/api/parse-resume`, {
+                const response = await fetch(API_BASE + '/api/parse-resume', {
                     method: 'POST',
                     body: formData
                 });
@@ -1293,7 +1293,7 @@
                 const input = form.elements[key];
                 if (input) {
                     if (input.type === 'radio') {
-                        const radio = form.querySelector(`input[name="${key}"][value="${value}"]`);
+                        const radio = form.querySelector('input[name="' + key + '"][value="' + value + '"]');
                         if (radio) radio.checked = true;
                     } else if (input.type === 'checkbox') {
                         input.checked = value;
@@ -1312,7 +1312,7 @@
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch(`${API_BASE}/api/submit`, {
+                const response = await fetch(API_BASE + '/api/submit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -1335,7 +1335,7 @@
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch(`${API_BASE}/api/generate-pdf`, {
+                const response = await fetch(API_BASE + '/api/generate-pdf', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -1559,7 +1559,7 @@
         };
 
         Object.keys(detailFieldMappings).forEach(radioName => {
-            const radios = document.querySelectorAll(`input[name="${radioName}"]`);
+            const radios = document.querySelectorAll('input[name="' + radioName + '"]');
             const detailGroup = document.getElementById(detailFieldMappings[radioName]);
 
             radios.forEach(radio => {
@@ -1585,17 +1585,7 @@
 
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
-                particle.style.cssText = `
-                    position: fixed;
-                    pointer-events: none;
-                    width: 8px;
-                    height: 8px;
-                    border-radius: 50%;
-                    background: ${colors[Math.floor(Math.random() * colors.length)]};
-                    left: ${x}px;
-                    top: ${y}px;
-                    z-index: 9999;
-                `;
+                particle.style.cssText = 'position: fixed; pointer-events: none; width: 8px; height: 8px; border-radius: 50%; background: ' + colors[Math.floor(Math.random() * colors.length)] + '; left: ' + x + 'px; top: ' + y + 'px; z-index: 9999;';
                 document.body.appendChild(particle);
 
                 const angle = (i / particleCount) * 360;
@@ -1610,7 +1600,7 @@
                     posY += vy * 0.05 + 1;
                     opacity -= 0.02;
 
-                    particle.style.transform = `translate(${posX}px, ${posY}px) scale(${opacity})`;
+                    particle.style.transform = 'translate(' + posX + 'px, ' + posY + 'px) scale(' + opacity + ')';
                     particle.style.opacity = opacity;
 
                     if (opacity > 0) {
