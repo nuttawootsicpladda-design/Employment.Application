@@ -646,7 +646,7 @@
             <h3>Upload Resume เพื่อกรอกฟอร์มอัตโนมัติ</h3>
             <input type="file" id="resumeFile" accept=".pdf,.doc,.docx">
             <br>
-            <button class="btn btn-primary" onclick="parseResume()">Parse Resume with AI</button>
+            <button class="btn btn-primary" id="parseResumeBtn" type="button">Parse Resume with AI</button>
         </div>
 
         <!-- AI Loading Popup Modal -->
@@ -1699,6 +1699,13 @@
                     }
                 });
             });
+        });
+
+        // Parse Resume Button Event Listener
+        document.getElementById('parseResumeBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            parseResume();
         });
 
         // Firework/Confetti effect on click
