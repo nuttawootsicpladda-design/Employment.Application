@@ -675,8 +675,8 @@
                     <td>${formatDate(app.created_at)}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="action-btn view" onclick="viewDetails(${app.id})">👁️ View</button>
-                            <button class="action-btn pdf" onclick="printApplication(${app.id})">🖨️ Print</button>
+                            <button class="action-btn view" onclick="viewDetails(${app.id})">View</button>
+                            <button class="action-btn pdf" onclick="printApplication(${app.id})">Print</button>
                         </div>
                     </td>
                 </tr>
@@ -849,7 +849,7 @@
                             <option value="accepted" ${app.status === 'accepted' ? 'selected' : ''}>Accepted</option>
                             <option value="rejected" ${app.status === 'rejected' ? 'selected' : ''}>Rejected</option>
                         </select>
-                        <button class="btn btn-success" onclick="printApplication(${app.id})">🖨️ Print Application</button>
+                        <button class="btn btn-success" onclick="printApplication(${app.id})">Print Application</button>
                     </div>
                 `;
 
@@ -882,7 +882,7 @@
                         updateStatistics();
                         renderTable();
                     }
-                    alert(`✅ Status updated to: ${getStatusText(newStatus)}`);
+                    alert('Status updated to: ' + getStatusText(newStatus));
                 } else {
                     alert('Error updating status: ' + result.error);
                 }
