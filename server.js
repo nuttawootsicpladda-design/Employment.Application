@@ -113,11 +113,23 @@ app.post('/api/parse-resume', upload.single('resume'), async (req, res) => {
 // Submit application
 app.post('/api/submit', async (req, res) => {
     try {
+        // Integer fields that need conversion from empty string to null
+        const integerFields = ['age', 'height', 'weight', 'family1Age', 'family2Age', 'family3Age', 'family4Age', 'numberOfChildren'];
+
         const applicationData = {
             ...req.body,
             created_at: new Date().toISOString(),
             status: 'pending'
         };
+
+        // Convert empty strings to null for integer fields
+        integerFields.forEach(field => {
+            if (applicationData[field] === '' || applicationData[field] === undefined) {
+                applicationData[field] = null;
+            } else if (applicationData[field]) {
+                applicationData[field] = parseInt(applicationData[field], 10) || null;
+            }
+        });
 
         const { data, error } = await supabase
             .from('applications')
