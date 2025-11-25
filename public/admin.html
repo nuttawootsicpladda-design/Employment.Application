@@ -568,10 +568,8 @@
             // Update user info in header
             const userInfoDiv = document.querySelector('.user-info > div');
             if (userInfoDiv) {
-                userInfoDiv.innerHTML = `
-                    <div style="font-weight: 600; color: #5f27cd;">Admin User</div>
-                    <div style="font-size: 12px; color: #999;">${adminUser}</div>
-                `;
+                userInfoDiv.innerHTML = '<div style="font-weight: 600; color: #5f27cd;">Admin User</div>' +
+                    '<div style="font-size: 12px; color: #999;">' + adminUser + '</div>';
             }
 
             return true;
